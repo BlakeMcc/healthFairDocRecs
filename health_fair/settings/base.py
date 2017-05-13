@@ -133,6 +133,6 @@ TWILIO_CALLER_ID = os.environ.get('TWILIO_CALLER_ID', None)
 TWILIO_APP_SID = os.environ.get('TWILIO_APP_SID', None)
 
 # BetterDoctor
-BETTER_DOCTOR_API_KEY = os.getenv('BETTER_DOCTOR_API_KEY')
+BETTER_DOCTOR_API_KEY = os.environ.get('BETTER_DOCTOR_API_KEY')
 
 from .sluggen import SLUG_WORDS
