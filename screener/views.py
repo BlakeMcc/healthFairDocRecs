@@ -32,7 +32,6 @@ def zip_to_lat_lon(zip_code):
     return '{},{},25'.format(location.latitude, location.longitude)
 
 
-
 def get_docs(**kwargs):
     better_docs_params = {}
 
@@ -82,6 +81,7 @@ def query_providers(params, skip=0):
             d['full_name'] = doctor['profile']['first_name'] + ' ' + doctor['profile']['last_name']
             d['location'] = practice_for_doc['location_slug']
             d['phone'] = practice_for_doc['phones'][0]['number']
+            d['npi'] = doctor['npi']
             doctor_dicts.append(d)
 
     return doctor_dicts

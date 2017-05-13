@@ -41,7 +41,7 @@
       <tbody>
         {% for provider in providers %}
         <tr>
-          <td><a href="{% url 'detail' 'test' %}">{{provider.full_name}}</a></td>
+          <td><a href="{% url 'detail' provider.npi %}">{{provider.full_name}}</a></td>
           <td>{{provider.location}}</td>
           <td>{{provider.phone}}</td>
         </tr>
