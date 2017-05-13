@@ -23,8 +23,8 @@ def parse_params(param_dict):
 
 # TODO: Implement querying APIs
 # params is a dict of the parameters to pass the API
-# should return a dict for rendering as JSON or context dict in template
-def query_providers(params):
+# should return a list of providers for rendering as JSON or context dict in template
+def query_providers(params, skip=0):
     return None
 
 # TODO: Implement querying provider APIs for detail info, Vital Signs, etc.
@@ -89,7 +89,9 @@ class ScreenView(TemplateView):
         if not len(screen_obj):
             return HttpResponseBadRequest()
 
-        provider_info = query_providers(screen_obj[0].params)
+        provider_info = query_providers(
+            screen_obj[0].params, skip=request.GET.get('skip', 0)
+        )
         response_dict = {'screen': screen_obj[0], 'providers': provider_info}
         response_dict.update(get_api_options())
         return render(request, self.template_name, response_dict)

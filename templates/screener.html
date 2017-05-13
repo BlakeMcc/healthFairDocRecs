@@ -20,4 +20,15 @@
     </form>
   </div>
 </div>
+<div class="row">
+  <div class="col-md-10">
+    {% for provider in providers %}
+    <div>
+      <p>{{provider.full_name}}</p>
+      <p>{{provider.location}}</p>
+      <p>{{provider.phone}}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
 {% endblock %}
