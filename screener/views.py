@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.views.generic import View, TemplateView
 
+from twilio.rest import Client
+
 from screener.models import *
 
 logger = logging.getLogger('screener')
@@ -196,6 +198,18 @@ class SendTextView(View):
 
     def get(self, request, *args, **kwargs):
         # TODO: Implement sending text to email with URL, first results?
+        screen_obj = Screen.objects.filter(slug=kwargs['slug'])
+        if not len(screen_obj):
+            return HttpResponseBadRequest()
+
+        patient_number = screen_obj[0].phone
+        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+        
+        message = client.messages.create(
+        to=number, 
+        from_=settings.TWILIO_CALLER_ID,
+        body=reverse('screen',kwargs=kwargs))
+    
         return HttpResponseRedirect(reverse('screen', kwargs=kwargs))
 
 
