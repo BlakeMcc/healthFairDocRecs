@@ -7,8 +7,15 @@
     <h1>Health Fair Screener</h1>
   </div>
   <div class="col-md-5 button-row">
-    <a class="btn btn-default" href="{% url 'send_text' screen.slug %}" role="button"
-      {% if not screen.phone %}disabled{% endif %}>Send Text</a>
+    {% if screen.phone %}
+    <a class="btn btn-default" href="{% url 'send_text' screen.slug %}" role="button">
+      Send Text
+    </a>
+    {% endif %}
+    {% if screen.email %}
+    <a class="btn btn-default" href="{% url 'send_text' screen.slug %}" role="button">
+      Send Text
+    </a>
   </div>
 </div>
 <div class="row">
