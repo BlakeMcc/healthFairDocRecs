@@ -50,5 +50,6 @@ class Screen(models.Model):
 
     @staticmethod
     def make_slug():
-        # TODO: implement creating human-readable unique slug for URL
-        return random.choice(['d', 'e', 'f'])
+        firstword = settings.SLUG_WORDS[random.randint(0,1501)]
+        num = str(random.randint(1,100))
+        return ''.join([firstword,num])
