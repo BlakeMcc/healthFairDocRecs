@@ -152,7 +152,7 @@ class SendTextView(View):
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
         
         message = client.messages.create(
-        to=number, 
+        to=patient_number, 
         from_=settings.TWILIO_CALLER_ID,
         body=reverse('screen',kwargs=kwargs))
     
