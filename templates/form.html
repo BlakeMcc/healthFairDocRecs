@@ -2,7 +2,7 @@
   <div class="col-md-6">
     <div class="form-group">
       <label for="zip_code">Zip Code</label>
-      <input type="text" name="zip_code" class="form-control" id="zip_code" aria-describedby="zipHelp"
+      <input type="text" name="zip_code" class="form-control" id="zip_code" aria-describedby="zipHelp" required
       {% if screen %}{% if 'zip_code' in screen.params %}
       value="{{screen.params.zip_code}}"
       {% endif %}{% endif %}>
@@ -57,9 +57,9 @@
     <div class="form-group">
       <label for="phone">Phone Number</label>
       <input type="text" name="phone" class="form-control" id="phone" aria-describedby="phoneHelp"
-        {% if screen %}
+        {% if screen %}{% if screen.phone %}
         value="{{screen.phone}}"
-        {% endif %}>
+        {% endif %}{% endif %}>
       <small id="phoneHelp" class="form-text text-muted">If you want to receive these results as a text message.</small>
     </div>
   </div>
@@ -67,9 +67,9 @@
     <div class="form-group">
       <label for="Email">Email</label>
       <input type="text" name="email" class="form-control" id="email" aria-describedby="emailHelp"
-        {% if screen %}
+        {% if screen %}{% if screen.email %}
         value="{{screen.email}}"
-        {% endif %}>
+        {% endif %}{% endif %}>
       <small id="emailHelp" class="form-text text-muted">If you want to receive these results over email.</small>
     </div>
   </div>

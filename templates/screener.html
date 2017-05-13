@@ -7,8 +7,16 @@
     <h1>Health Fair Screener</h1>
   </div>
   <div class="col-md-5 button-row">
-    <a class="btn btn-default" href="{% url 'send_text' screen.slug %}" role="button"
-      {% if not screen.phone %}disabled{% endif %}>Send Text</a>
+    {% if screen.phone %}
+    <a class="btn btn-default" href="{% url 'send_text' screen.slug %}" role="button">
+      Send Text
+    </a>
+    {% endif %}
+    {% if screen.email %}
+    <a class="btn btn-default" href="#" role="button">
+      Send Email
+    </a>
+    {% endif %}
   </div>
 </div>
 <div class="row">
@@ -22,13 +30,36 @@
 </div>
 <div class="row">
   <div class="col-md-10">
-    {% for provider in providers %}
-    <div>
-      <p>{{provider.full_name}}</p>
-      <p>{{provider.location}}</p>
-      <p>{{provider.phone}}</p>
-    </div>
-    {% endfor %}
+    <table class="table table-striped table-responsive">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Location</th>
+          <th>Phone</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for provider in providers %}
+        <tr>
+          <td><a href="{% url 'detail' provider.npi %}">{{provider.full_name}}</a></td>
+          <td>{{provider.location}}</td>
+          <td>{{provider.phone}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-10">
+    {% if prev_skip %}
+    <a class="btn btn-default" href="{% url 'screen' screen.slug %}?skip={{prev_skip}}" role="button">
+      Previous
+    </a>
+    {% endif %}
+    {% if next_skip %}
+    <a class="btn btn-default" href="{% url 'screen' screen.slug %}?skip={{next_skip}}" role="button">
+      Next
+    </a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
