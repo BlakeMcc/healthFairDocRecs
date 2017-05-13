@@ -90,9 +90,9 @@ class ScreenView(TemplateView):
             return HttpResponseBadRequest()
 
         provider_info = query_providers(screen_obj[0].params)
-        return render(request, self.template_name, {
-            'screen': screen_obj[0], 'providers': provider_info
-        })
+        response_dict = {'screen': screen_obj[0], 'providers': provider_info}
+        response_dict.update(get_api_options())
+        return render(request, self.template_name, response_dict)
 
     # Updates the Screen object with new saved params
     def put(self, request, *args, **kwargs):

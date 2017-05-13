@@ -11,6 +11,8 @@ ROLE_CHOICES = (
     (2, 'Admin')
 )
 
+GENDER_OPTIONS = ['m', 'f', 'o']
+
 
 class Organization(models.Model):
     name = models.CharField(max_length=250)
@@ -49,4 +51,4 @@ class Screen(models.Model):
     @staticmethod
     def make_slug():
         # TODO: implement creating human-readable unique slug for URL
-        return random.choice(['a', 'b', 'c'])
+        return random.choice(['d', 'e', 'f'])

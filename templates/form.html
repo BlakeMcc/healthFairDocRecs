@@ -1,0 +1,76 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="zip_code">Zip Code</label>
+      <input type="text" name="zip_code" class="form-control" id="zip_code" aria-describedby="zipHelp"
+      {% if screen %}{% if 'zip_code' in screen.params %}
+      value="{{screen.params.zip_code}}"
+      {% endif %}{% endif %}>
+      <small id="zipHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="gender">Gender</label>
+      <select class="form-control" id="gender" name="gender"
+        {% if screen %}{% if 'gender' in screen.params %}
+        value="{{screen.params.gender}}"
+        {% endif %}{% endif %}>
+        <option></option>
+        <option value="m">Male</option>
+        <option value="f">Female</option>
+        <option value="o">Other</option>
+      </select>
+    </div>
+  </div>
+</div>
+<div class="form-group">
+  <label for="insurance">Insurance</label>
+  <select class="form-control" id="insurance" name="insurance">
+    <option></option>
+    {% for insurance in insurance_options %}
+    <option value="{{insurance.value}}"
+    {% if screen %}
+    {% if 'insurance' in screen.params %}
+    {% if screen.params.insurance == insurance.value %}
+    selected
+    {% endif %}{% endif %}{% endif %}>{{insurance.display}}</option>
+    {% endfor %}
+  </select>
+</div>
+<div class="form-group">
+  <label for="specialty">Specialty</label>
+  <select class="form-control" id="specialty" name="specialty">
+    <option></option>
+    {% for specialty in specialty_options %}
+    <option value="{{specialty.value}}"
+      {% if screen %}
+      {% if 'specialty' in screen.params %}
+      {% if screen.params.specialty == specialty.value %}
+      selected
+      {% endif %}{% endif %}{% endif %}>{{specialty.display}}</option>
+    {% endfor %}
+  </select>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input type="text" name="phone" class="form-control" id="phone" aria-describedby="phoneHelp"
+        {% if screen %}
+        value="{{screen.phone}}"
+        {% endif %}>
+      <small id="phoneHelp" class="form-text text-muted">If you want to receive these results as a text message.</small>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="Email">Email</label>
+      <input type="text" name="email" class="form-control" id="email" aria-describedby="emailHelp"
+        {% if screen %}
+        value="{{screen.email}}"
+        {% endif %}>
+      <small id="emailHelp" class="form-text text-muted">If you want to receive these results over email.</small>
+    </div>
+  </div>
+</div>
