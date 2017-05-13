@@ -134,3 +134,5 @@ TWILIO_APP_SID = os.environ.get('TWILIO_APP_SID', None)
 
 # BetterDoctor
 BETTER_DOCTOR_API_KEY = os.getenv('BETTER_DOCTOR_API_KEY')
+
+from .sluggen import SLUG_WORDS
