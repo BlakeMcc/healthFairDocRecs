@@ -40,7 +40,7 @@ class Staff(models.Model):
 
 class Screen(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    slug = models.CharField(max_length=250)
+    slug = models.CharField(max_length=250, db_index=True)
     params = JSONField()
     phone = models.CharField(max_length=20, blank=True, null=True)
     email = models.CharField(max_length=50, blank=True, null=True)

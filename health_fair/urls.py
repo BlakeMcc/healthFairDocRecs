@@ -3,9 +3,11 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
+from screener.views import *
 
 
 urlpatterns = [
     url(r'^dj-admin/', admin.site.urls),
-    url(r'$', TemplateView.as_view(template_name='home.html'), name='home'),
+    url(r'$', HomeView.as_view(), name='home'),
+    url(r'^search/(?P<slug>[a-zA-Z0-9-]+)$', ScreenView.as_view(), name='screen')
 ]
