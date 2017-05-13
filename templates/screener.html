@@ -7,4 +7,47 @@
     <h1>Hello world</h1>
   </div>
 </div>
+<div class="row">
+  <div class="col-md-10">
+    <form name="screenForm" method="POST" action="{% url 'screen' screen.slug %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="zip_code">Zip Code</label>
+        <input type="text" name="zip_code" class="form-control" id="zip_code" aria-describedby="zipHelp" placeholder="Enter zip code"
+          {% if 'zip_code' in screen.params %}
+          value="{{screen.params.zip_code}}"
+          {% endif %}>
+        <small id="zipHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+      </div>
+      <div class="form-group">
+        <label for="insurance">Insurance</label>
+        <select class="form-control" id="insurance" name="insurance">
+          <option></option>
+          {% for insurance in insurance_options %}
+          <option value="{{insurance.value}}">{{insurance.display}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="specialty">Specialty</label>
+        <select class="form-control" id="specialty" name="specialty">
+          <option></option>
+          {% for specialty in specialty_options %}
+          <option value="{{specialty.value}}">{{specialty.display}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="gender">Gender</label>
+        <select class="form-control" id="gender" name="gender">
+          <option></option>
+          <option value="m">Male</option>
+          <option value="f">Female</option>
+          <option value="o">Other</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
 {% endblock %}

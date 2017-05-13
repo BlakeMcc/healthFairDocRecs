@@ -8,6 +8,6 @@ from screener.views import *
 
 urlpatterns = [
     url(r'^dj-admin/', admin.site.urls),
-    url(r'$', HomeView.as_view(), name='home'),
+    url(r'^$', HomeView.as_view(), name='home'),
     url(r'^search/(?P<slug>[a-zA-Z0-9-]+)$', ScreenView.as_view(), name='screen')
 ]

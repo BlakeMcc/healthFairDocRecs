@@ -46,7 +46,7 @@ class Screen(models.Model):
     email = models.CharField(max_length=50, blank=True, null=True)
     event = models.ForeignKey('Event', blank=True, null=True)
 
-    @classmethod
+    @staticmethod
     def make_slug():
         # TODO: implement creating human-readable unique slug for URL
         return random.choice(['a', 'b', 'c'])
