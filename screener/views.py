@@ -1,5 +1,6 @@
 import json
 import logging
+import requests
 
 from django.shortcuts import render
 from django.conf import settings
@@ -28,14 +29,13 @@ def zip_to_lat_lon(zip):
     return '41.883969,-87.6284144,100'
 
 
-def getDocs(**kwargs):
+def get_docs(**kwargs):
     better_docs_params = {}
 
     for key, value in kwargs.items():
         better_docs_params[key] = value
 
-
-    better_docs_params['user_key'] = 'c58af78e9d9d991fdb9b1eb1b7d29a86'
+    better_docs_params['user_key'] = settings.BETTER_DOCTOR_API_KEY
     better_docs_params['location'] = zip_to_lat_lon(better_docs_params['zip_code'])
     better_docs_params.pop('zip_code')
 
@@ -44,7 +44,7 @@ def getDocs(**kwargs):
     return r.json()['data']
 
 
-def getbestpractice(practices):
+def get_best_practice(practices):
     bestpractice = []
     for practice in practices:
         if practice['within_search_area'] == False:
@@ -60,18 +60,19 @@ def getbestpractice(practices):
         if practice['distance'] < bestpractice[0]['distance']:
             bestpractice[0] = practice
             continue
-        return bestpractice
+    return bestpractice
 
-# TODO: Implement querying APIs
+
 # params is a dict of the parameters to pass the API
 # should return a list of providers for rendering as JSON or context dict in template
 def query_providers(params, skip=0):
-    json_data = getDocs(**params)
+    json_data = get_docs(**params)
     doctor_dicts = []
-    
+
     for doctor in json_data:
-        practice_for_doc = getbestpractice(doctor['practices'])
+        practice_for_doc = get_best_practice(doctor['practices'])
         if len(practice_for_doc) > 0:
+            practice_for_doc = practice_for_doc[0]
             d = {}
             d['full_name'] = doctor['profile']['first_name'] + ' ' + doctor['profile']['last_name']
             d['location'] = practice_for_doc['location_slug']
@@ -79,9 +80,6 @@ def query_providers(params, skip=0):
             doctor_dicts.append(d)
 
     return doctor_dicts
-
-
-
 
 # TODO: Implement querying provider APIs for detail info, Vital Signs, etc.
 def query_provider_detail(npi):
@@ -145,7 +143,7 @@ class ScreenView(TemplateView):
         if not len(screen_obj):
             return HttpResponseBadRequest()
 
-        skip_val = request.GET.get('skip', 0)
+        skip_val = int(request.GET.get('skip', 0))
         provider_info = query_providers(
             screen_obj[0].params, skip=skip_val
         )
