@@ -29,7 +29,7 @@ def parse_params(param_dict):
 def zip_to_lat_lon(zip_code):
     geolocator = Nominatim()
     location = geolocator.geocode(zip_code)
-    return location.latitude+','+location.longitude+',25'
+    return '{},{},25'.format(location.latitude, location.longitude)
 
 
 
