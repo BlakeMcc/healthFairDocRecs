@@ -1,5 +1,6 @@
 import json
 import logging
+from geopy.geocoders import Nominatim
 
 from django.shortcuts import render
 from django.conf import settings
@@ -24,8 +25,11 @@ def parse_params(param_dict):
     return params
 
 
-def zip_to_lat_lon(zip):
-    return '41.883969,-87.6284144,100'
+def zip_to_lat_lon(zip_code):
+    geolocator = Nominatim()
+    location = geolocator.geocode(zip_code)
+    return location.latitude+','+location.longitude+',25'
+
 
 
 def getDocs(**kwargs):
@@ -66,9 +70,10 @@ def getbestpractice(practices):
 # params is a dict of the parameters to pass the API
 # should return a list of providers for rendering as JSON or context dict in template
 def query_providers(params, skip=0):
+    params['skip']=skip
     json_data = getDocs(**params)
     doctor_dicts = []
-    
+
     for doctor in json_data:
         practice_for_doc = getbestpractice(doctor['practices'])
         if len(practice_for_doc) > 0:
