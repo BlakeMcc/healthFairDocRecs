@@ -23,11 +23,65 @@ def parse_params(param_dict):
             params[p] = param_dict.get(p)
     return params
 
+
+def zip_to_lat_lon(zip):
+    return '41.883969,-87.6284144,100'
+
+
+def getDocs(**kwargs):
+    better_docs_params = {}
+
+    for key, value in kwargs.items():
+        better_docs_params[key] = value
+
+
+    better_docs_params['user_key'] = 'c58af78e9d9d991fdb9b1eb1b7d29a86'
+    better_docs_params['location'] = zip_to_lat_lon(better_docs_params['zip_code'])
+    better_docs_params.pop('zip_code')
+
+    url = 'https://api.betterdoctor.com/2016-03-01/doctors'
+    r = requests.get(url, params=better_docs_params)
+    return r.json()['data']
+
+
+def getbestpractice(practices):
+    bestpractice = []
+    for practice in practices:
+        if practice['within_search_area'] == False:
+            continue
+        if 'phones' in practice:
+            if len(practice['phones']) == 0:
+                continue
+        if practice['accepts_new_patients'] == False:
+            continue
+        if len(bestpractice) == 0:
+            bestpractice.append(practice)
+            continue
+        if practice['distance'] < bestpractice[0]['distance']:
+            bestpractice[0] = practice
+            continue
+        return bestpractice
+
 # TODO: Implement querying APIs
 # params is a dict of the parameters to pass the API
 # should return a list of providers for rendering as JSON or context dict in template
 def query_providers(params, skip=0):
-    return None
+    json_data = getDocs(**params)
+    doctor_dicts = []
+    
+    for doctor in json_data:
+        practice_for_doc = getbestpractice(doctor['practices'])
+        if len(practice_for_doc) > 0:
+            d = {}
+            d['full_name'] = doctor['profile']['first_name'] + ' ' + doctor['profile']['last_name']
+            d['location'] = practice_for_doc['location_slug']
+            d['phone'] = practice_for_doc['phones'][0]['number']
+            doctor_dicts.append(d)
+
+    return doctor_dicts
+
+
+
 
 # TODO: Implement querying provider APIs for detail info, Vital Signs, etc.
 def query_provider_detail(npi):
