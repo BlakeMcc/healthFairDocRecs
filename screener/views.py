@@ -206,9 +206,8 @@ class SendTextView(View):
         message = client.messages.create(
             to=patient_number,
             from_=settings.TWILIO_CALLER_ID,
-            body=reverse('screen', kwargs=kwargs)
+            body=request.get_host() + reverse('screen', kwargs=kwargs)
         )
-
         return HttpResponseRedirect(reverse('screen', kwargs=kwargs))
 
 
