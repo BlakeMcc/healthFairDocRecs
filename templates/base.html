@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Health Fair Screener{% endblock %}</title>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
+    {% block headextra %}
+    {% endblock %}
+</head>
+<body>
+<div>
+    {% block topnav %}
+    {% endblock %}
+
+    {% block content %}
+    {%  endblock  %}
+
+    {% block footer %}
+    {% endblock %}
+</div>
+{% block bottomscript %}
+{% endblock %}
+</body>
+</html>
