@@ -129,6 +129,15 @@ class ScreenView(TemplateView):
         return render(request, self.template_name, providers)
 
 
+class SendTextView(View):
+    def dispatch(self, request, *args, **kwargs):
+        return super(SendTextView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        # TODO: Implement sending text to email with URL, first results?
+        return HttpResponseRedirect(reverse('screen', kwargs=kwargs))
+
+
 class ProviderDetailView(TemplateView):
     template_name = 'detail.html'
 
