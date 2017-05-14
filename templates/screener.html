@@ -20,6 +20,15 @@
   </div>
 </div>
 <div class="row">
+  <div class="col-md-5">
+    <span id="urlVal">http://{{request.get_host}}/{{screen.slug}}</span>
+    <button type="button" class="btn btn-default" aria-label="Copy to Clipboard"
+      onclick="copyClipboard()">
+      <span class="glyphicon glyphicon glyphicon-copy" aria-hidden="true"></span>
+    </button>
+  </div>
+</div>
+<div class="row">
   <div class="col-md-10">
     <form name="screenForm" method="POST" action="{% url 'screen' screen.slug %}">
       {% csrf_token %}
