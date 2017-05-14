@@ -79,7 +79,11 @@ def query_providers(params, skip=0):
             d = {}
             d['full_name'] = doctor['profile']['first_name'] + ' ' + doctor['profile']['last_name']
             practice_location = practice_for_doc['visit_address']
-            d['location'] = practice_location['street']+" "+practice_location['street2'] +'\n' +practice_location['city']+ ", "+practice_location['state'] + " " + practice_location['zip']
+            if 'street2' in practice_location:
+                d['location'] = practice_location['street']+" "+practice_location['street2'] +'\n' +practice_location['city']+ ", "+practice_location['state'] + " " + practice_location['zip']
+            else:
+                d['location'] = practice_location['street'] +'\n' +practice_location['city']+ ", "+practice_location['state'] + " " + practice_location['zip']
+
             d['phone'] = practice_for_doc['phones'][0]['number']
             d['npi'] = doctor['npi']
             doctor_dicts.append(d)
@@ -87,8 +91,7 @@ def query_providers(params, skip=0):
     return doctor_dicts
 
 # TODO: Implement querying provider APIs for detail info, Vital Signs, etc.
-def query_provider_detail(npi):
-    params['skip']=skip
+def query_provider_detail(params, skip=0):
     json_data = get_docs(**params)
     doctor_dicts = []
 
@@ -254,9 +257,9 @@ class ProviderDetailView(TemplateView):
             settings.VITAL_SIGNS_URL + kwargs['npi'],
             headers={'X-API-Key': settings.VITAL_SIGNS_API_KEY}
         )
-
-        # return render(request, self.template_name, response.json())
-        return JsonResponse(resp.json())
+        response_dict = {'doctor':resp.json(), 'npi':kwargs['npi']}
+        return render(request, self.template_name, response_dict)
+        #return JsonResponse(resp.json())
 
 
 class DashboardView(TemplateView):
