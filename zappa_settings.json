@@ -6,6 +6,7 @@
         "s3_bucket": "zappa-forkvglfs",
         "keep_warm": false,
         "domain": "fairhealth.site",
-        "lets_encrypt_key": "s3://fairhealthconfig/account.key"
+        "remote_env": "s3://fairhealthconfig/env.json",
+        "lets_encrypt_key": "account.key"
     }
 }
