@@ -5,6 +5,7 @@
         "profile_name": "default",
         "s3_bucket": "zappa-forkvglfs",
         "keep_warm": false,
-        "domain": "fairhealth.site"
+        "domain": "fairhealth.site",
+        "lets_encrypt_key": "s3://fairhealthconfig/account.key"
     }
 }
