@@ -6,6 +6,7 @@ if 'test' in sys.argv:
     INSTALLED_APPS += TEST_APPS
 else:
     INSTALLED_APPS += ['debug_toolbar']
+    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
     ENVIRONMENT = 'dev'
 
     LOGGING = {

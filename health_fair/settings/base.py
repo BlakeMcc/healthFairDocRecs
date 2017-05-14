@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.postgres'
+    'django.contrib.postgres',
 ]
 
 MIDDLEWARE = [
@@ -35,7 +35,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'health_fair.urls'
@@ -138,5 +137,8 @@ BETTER_DOCTOR_API_KEY = os.environ.get('BETTER_DOCTOR_API_KEY')
 
 # Vital Signs
 VITAL_SIGNS_API_KEY = os.environ.get('VITAL_SIGNS_API_KEY')
+VITAL_SIGNS_URL = 'https://api.propublica.org/doctors/'
+
+INTERNAL_IPS = ['127.0.0.1']
 
 from .sluggen import SLUG_WORDS

@@ -216,9 +216,11 @@ class ProviderDetailView(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         return super(ProviderDetailView, self).dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super(ProviderDetailView, self).get_context_data(**kwargs)
-        context['npi'] = kwargs['npi']
-        # TODO: Pull other information from multiple APIs
-        context.update(query_provider_detail(context['npi']))
-        return context
+    def get(self, request, *args, **kwargs):
+        resp = requests.get(
+            settings.VITAL_SIGNS_URL + kwargs['npi'],
+            headers={'X-API-Key': settings.VITAL_SIGNS_API_KEY}
+        )
+
+        # return render(request, self.template_name, response.json())
+        return JsonResponse(resp.json())
