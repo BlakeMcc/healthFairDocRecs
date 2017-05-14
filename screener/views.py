@@ -151,11 +151,14 @@ class ScreenView(TemplateView):
     # Renders template based on pre-created slug
     def get(self, request, *args, **kwargs):
         screen_obj = Screen.objects.filter(slug=kwargs['slug'])
-        screen_obj.update(visits=F('visits')+1)
         if not len(screen_obj):
             return HttpResponseBadRequest()
 
         skip_val = int(request.GET.get('skip', 0))
+        # Only update visits count if it's the first page
+        if skip_val == 0:
+            screen_obj.update(visits=F('visits')+1)
+
         provider_info = query_providers(
             screen_obj[0].params, skip=skip_val
         )
@@ -202,12 +205,24 @@ class SendTextView(View):
 
         patient_number = screen_obj[0].phone
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+<<<<<<< HEAD
         
         
+=======
+
+        provider_info = query_providers(screen_obj[0].params)
+        prettydoc = []
+        for doc in provider_info:
+            prettydoc.append('Name: ' + doc['full_name'] + '\n')
+            prettydoc.append('Phone: ' + doc['phone'] + '\n')
+            prettydoc.append('Office: ' + doc['location'] + '\n\n')
+
+        textbody = ''.join(prettydoc)
+>>>>>>> 5059206b374cfb1f3bdf2473958f6f7f1cf393cc
         message = client.messages.create(
             to=patient_number,
             from_=settings.TWILIO_CALLER_ID,
-            body=request.get_host() + reverse('screen', kwargs=kwargs)
+            body= textbody + 'https://' + request.get_host() + reverse('screen', kwargs=kwargs)
         )
         return HttpResponseRedirect(reverse('screen', kwargs=kwargs))
 
@@ -226,3 +241,19 @@ class ProviderDetailView(TemplateView):
 
         # return render(request, self.template_name, response.json())
         return JsonResponse(resp.json())
+
+
+class DashboardView(TemplateView):
+    template_name = 'dashboard.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        return super(DashboardView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        screens = Screen.objects.all().values()
+        param_list = [
+            dict(s['params'],
+            **{'date': s['created_at'].strftime('%Y-%m-%d'),
+            'visits': s['visits']}) for s in screens
+        ]
+        return render(request, self.template_name, {'param_list': param_list})
