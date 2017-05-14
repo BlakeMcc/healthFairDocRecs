@@ -205,10 +205,18 @@ class SendTextView(View):
         patient_number = screen_obj[0].phone
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
+        provider_info = query_providers(screen_obj[0].params)
+        prettydoc = []
+        for doc in provider_info:
+            prettydoc.append('Name: ' + doc['full_name'] + '\n')
+            prettydoc.append('Phone: ' + doc['phone'] + '\n')
+            prettydoc.append('Office: ' + doc['location'] + '\n\n')
+
+        textbody = ''.join(prettydoc)
         message = client.messages.create(
             to=patient_number,
             from_=settings.TWILIO_CALLER_ID,
-            body=request.get_host() + reverse('screen', kwargs=kwargs)
+            body= textbody + 'https://' + request.get_host() + reverse('screen', kwargs=kwargs)
         )
         return HttpResponseRedirect(reverse('screen', kwargs=kwargs))
 
