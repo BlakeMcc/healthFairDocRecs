@@ -150,11 +150,14 @@ class ScreenView(TemplateView):
     # Renders template based on pre-created slug
     def get(self, request, *args, **kwargs):
         screen_obj = Screen.objects.filter(slug=kwargs['slug'])
-        screen_obj.update(visits=F('visits')+1)
         if not len(screen_obj):
             return HttpResponseBadRequest()
 
         skip_val = int(request.GET.get('skip', 0))
+        # Only update visits count if it's the first page
+        if skip_val == 0:
+            screen_obj.update(visits=F('visits')+1)
+
         provider_info = query_providers(
             screen_obj[0].params, skip=skip_val
         )
@@ -224,3 +227,19 @@ class ProviderDetailView(TemplateView):
 
         # return render(request, self.template_name, response.json())
         return JsonResponse(resp.json())
+
+
+class DashboardView(TemplateView):
+    template_name = 'dashboard.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        return super(DashboardView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        screens = Screen.objects.all().values()
+        param_list = [
+            dict(s['params'],
+            **{'date': s['created_at'].strftime('%Y-%m-%d'),
+            'visits': s['visits']}) for s in screens
+        ]
+        return render(request, self.template_name, {'param_list': param_list})

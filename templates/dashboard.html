@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block headextra %}
+<script src="https://d3js.org/d3.v4.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-10">
+    <h1>Health Fair Screener Dashboard</h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-10">
+    <p>
+      <h4>Visit Counts</h4>
+      <svg id="chart"></svg>
+    </p>
+    <p>
+      <h4>Insurance Counts</h4>
+      <svg id="insuranceChart"></svg>
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block bottomscript %}
+<script>
+var screenData = {{param_list|safe}};
+</script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}
