@@ -80,7 +80,11 @@ def query_providers(params, skip=0):
             d = {}
             d['full_name'] = doctor['profile']['first_name'] + ' ' + doctor['profile']['last_name']
             practice_location = practice_for_doc['visit_address']
-            d['location'] = practice_location['street']+" "+practice_location['street2'] +'\n' +practice_location['city']+ ", "+practice_location['state'] + " " + practice_location['zip']
+            if 'street2' in practice_location:
+                d['location'] = practice_location['street']+" "+practice_location['street2'] +'\n' +practice_location['city']+ ", "+practice_location['state'] + " " + practice_location['zip']
+            else:
+                d['location'] = practice_location['street']+'\n' +practice_location['city']+ ", "+practice_location['state'] + " " + practice_location['zip']
+
             d['phone'] = practice_for_doc['phones'][0]['number']
             d['npi'] = doctor['npi']
             doctor_dicts.append(d)
@@ -205,10 +209,6 @@ class SendTextView(View):
 
         patient_number = screen_obj[0].phone
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-<<<<<<< HEAD
-        
-        
-=======
 
         provider_info = query_providers(screen_obj[0].params)
         prettydoc = []
@@ -218,7 +218,6 @@ class SendTextView(View):
             prettydoc.append('Office: ' + doc['location'] + '\n\n')
 
         textbody = ''.join(prettydoc)
->>>>>>> 5059206b374cfb1f3bdf2473958f6f7f1cf393cc
         message = client.messages.create(
             to=patient_number,
             from_=settings.TWILIO_CALLER_ID,
