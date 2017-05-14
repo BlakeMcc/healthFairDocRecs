@@ -79,7 +79,8 @@ def query_providers(params, skip=0):
             practice_for_doc = practice_for_doc[0]
             d = {}
             d['full_name'] = doctor['profile']['first_name'] + ' ' + doctor['profile']['last_name']
-            d['location'] = practice_for_doc['location_slug']
+            practice_location = practice_for_doc['visit_address']
+            d['location'] = practice_location['street']+" "+practice_location['street2'] +'\n' +practice_location['city']+ ", "+practice_location['state'] + " " + practice_location['zip']
             d['phone'] = practice_for_doc['phones'][0]['number']
             d['npi'] = doctor['npi']
             doctor_dicts.append(d)
@@ -201,7 +202,8 @@ class SendTextView(View):
 
         patient_number = screen_obj[0].phone
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-
+        
+        
         message = client.messages.create(
             to=patient_number,
             from_=settings.TWILIO_CALLER_ID,
