@@ -237,10 +237,10 @@ class ProviderDetailView(TemplateView):
             settings.VITAL_SIGNS_URL + kwargs['npi'],
             headers={'X-API-Key': settings.VITAL_SIGNS_API_KEY}
         )
+        response_dict = {'doctor':resp.json(), 'npi':kwargs['npi']}
 
-        # return render(request, self.template_name, response.json())
-        return JsonResponse(resp.json())
-
+        return render(request, self.template_name, response_dict)
+        #return JsonResponse(resp.json())
 
 class DashboardView(TemplateView):
     template_name = 'dashboard.html'
