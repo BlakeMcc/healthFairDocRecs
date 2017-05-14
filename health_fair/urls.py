@@ -11,7 +11,8 @@ urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^search/(?P<slug>[a-zA-Z0-9-]+)$', ScreenView.as_view(), name='screen'),
     url(r'^detail/(?P<npi>[a-zA-Z0-9-]+)$', ProviderDetailView.as_view(), name='detail'),
-    url(r'^send-text/(?P<slug>[a-zA-Z0-9-]+)$', SendTextView.as_view(), name='send_text')
+    url(r'^send-text/(?P<slug>[a-zA-Z0-9-]+)$', SendTextView.as_view(), name='send_text'),
+    url(r'^dashboard$', DashboardView.as_view(), name='dashboard')
 ]
 
 if settings.DEBUG:

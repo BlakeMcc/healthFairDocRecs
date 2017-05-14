@@ -1,0 +1,12 @@
+{
+    "prod": {
+        "aws_region": "us-east-1",
+        "django_settings": "health_fair.settings.prod",
+        "profile_name": "default",
+        "s3_bucket": "zappa-forkvglfs",
+        "keep_warm": false,
+        "domain": "fairhealth.site",
+        "remote_env": "s3://fairhealthconfig/env.json",
+        "lets_encrypt_key": "account.key"
+    }
+}

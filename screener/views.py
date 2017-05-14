@@ -65,7 +65,6 @@ def get_best_practice(practices):
             continue
     return bestpractice
 
-
 # params is a dict of the parameters to pass the API
 # should return a list of providers for rendering as JSON or context dict in template
 def query_providers(params, skip=0):
@@ -79,7 +78,8 @@ def query_providers(params, skip=0):
             practice_for_doc = practice_for_doc[0]
             d = {}
             d['full_name'] = doctor['profile']['first_name'] + ' ' + doctor['profile']['last_name']
-            d['location'] = practice_for_doc['location_slug']
+            practice_location = practice_for_doc['visit_address']
+            d['location'] = practice_location['street']+" "+practice_location['street2'] +'\n' +practice_location['city']+ ", "+practice_location['state'] + " " + practice_location['zip']
             d['phone'] = practice_for_doc['phones'][0]['number']
             d['npi'] = doctor['npi']
             doctor_dicts.append(d)
@@ -88,7 +88,28 @@ def query_providers(params, skip=0):
 
 # TODO: Implement querying provider APIs for detail info, Vital Signs, etc.
 def query_provider_detail(npi):
-    return None
+    params['skip']=skip
+    json_data = get_docs(**params)
+    doctor_dicts = []
+
+    for doctor in json_data:
+        practice_for_doc = get_best_practice(doctor['practices'])
+        if len(practice_for_doc) > 0:
+            practice_for_doc = practice_for_doc[0]
+            d = {}
+            d['full_name'] = doctor['profile']['first_name'] + ' ' + doctor['profile']['last_name']
+            practice_location = practice_for_doc['visit_address']
+            d['location'] = practice_location['street']+" "+practice_location['street2'] +'\n' +practice_location['city']+ ", "+practice_location['state'] + " " + practice_location['zip']
+            d['phone'] = practice_for_doc['phones'][0]['number']
+            d['npi'] = doctor['npi']
+            d['education'] = doctor['education']
+            d['specialties'] = doctor['specialties']
+            d['hospital'] = doctor['hospital_affiliations']
+            d['practice'] = practice_for_doc
+            doctor_dicts.append(d)
+
+    return doctor_dicts
+
 
 # TODO: Pull insurance and specialty options
 def get_api_options():
@@ -150,11 +171,14 @@ class ScreenView(TemplateView):
     # Renders template based on pre-created slug
     def get(self, request, *args, **kwargs):
         screen_obj = Screen.objects.filter(slug=kwargs['slug'])
-        screen_obj.update(visits=F('visits')+1)
         if not len(screen_obj):
             return HttpResponseBadRequest()
 
         skip_val = int(request.GET.get('skip', 0))
+        # Only update visits count if it's the first page
+        if skip_val == 0:
+            screen_obj.update(visits=F('visits')+1)
+
         provider_info = query_providers(
             screen_obj[0].params, skip=skip_val
         )
@@ -202,10 +226,19 @@ class SendTextView(View):
         patient_number = screen_obj[0].phone
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
+        provider_info = query_providers(screen_obj[0].params)
+        prettydoc = []
+        for doc in provider_info:
+            prettydoc.append('Name: ' + doc['full_name'] + '\n')
+            prettydoc.append('Phone: ' + doc['phone'] + '\n')
+            prettydoc.append('Office: ' + doc['location'] + '\n\n')
+
+        textbody = ''.join(prettydoc)
+
         message = client.messages.create(
             to=patient_number,
             from_=settings.TWILIO_CALLER_ID,
-            body=request.get_host() + reverse('screen', kwargs=kwargs)
+            body= textbody + 'https://' + request.get_host() + reverse('screen', kwargs=kwargs)
         )
         return HttpResponseRedirect(reverse('screen', kwargs=kwargs))
 
@@ -224,3 +257,19 @@ class ProviderDetailView(TemplateView):
 
         # return render(request, self.template_name, response.json())
         return JsonResponse(resp.json())
+
+
+class DashboardView(TemplateView):
+    template_name = 'dashboard.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        return super(DashboardView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        screens = Screen.objects.all().values()
+        param_list = [
+            dict(s['params'],
+            **{'date': s['created_at'].strftime('%Y-%m-%d'),
+            'visits': s['visits']}) for s in screens
+        ]
+        return render(request, self.template_name, {'param_list': param_list})
