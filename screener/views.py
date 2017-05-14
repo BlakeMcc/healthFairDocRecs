@@ -65,7 +65,6 @@ def get_best_practice(practices):
             continue
     return bestpractice
 
-
 # params is a dict of the parameters to pass the API
 # should return a list of providers for rendering as JSON or context dict in template
 def query_providers(params, skip=0):
@@ -79,7 +78,8 @@ def query_providers(params, skip=0):
             practice_for_doc = practice_for_doc[0]
             d = {}
             d['full_name'] = doctor['profile']['first_name'] + ' ' + doctor['profile']['last_name']
-            d['location'] = practice_for_doc['location_slug']
+            practice_location = practice_for_doc['visit_address']
+            d['location'] = practice_location['street']+" "+practice_location['street2'] +'\n' +practice_location['city']+ ", "+practice_location['state'] + " " + practice_location['zip']
             d['phone'] = practice_for_doc['phones'][0]['number']
             d['npi'] = doctor['npi']
             doctor_dicts.append(d)
@@ -88,7 +88,28 @@ def query_providers(params, skip=0):
 
 # TODO: Implement querying provider APIs for detail info, Vital Signs, etc.
 def query_provider_detail(npi):
-    return None
+    params['skip']=skip
+    json_data = get_docs(**params)
+    doctor_dicts = []
+
+    for doctor in json_data:
+        practice_for_doc = get_best_practice(doctor['practices'])
+        if len(practice_for_doc) > 0:
+            practice_for_doc = practice_for_doc[0]
+            d = {}
+            d['full_name'] = doctor['profile']['first_name'] + ' ' + doctor['profile']['last_name']
+            practice_location = practice_for_doc['visit_address']
+            d['location'] = practice_location['street']+" "+practice_location['street2'] +'\n' +practice_location['city']+ ", "+practice_location['state'] + " " + practice_location['zip']
+            d['phone'] = practice_for_doc['phones'][0]['number']
+            d['npi'] = doctor['npi']
+            d['education'] = doctor['education']
+            d['specialties'] = doctor['specialties']
+            d['hospital'] = doctor['hospital_affiliations']
+            d['practice'] = practice_for_doc
+            doctor_dicts.append(d)
+
+    return doctor_dicts
+
 
 # TODO: Pull insurance and specialty options
 def get_api_options():
@@ -213,6 +234,7 @@ class SendTextView(View):
             prettydoc.append('Office: ' + doc['location'] + '\n\n')
 
         textbody = ''.join(prettydoc)
+
         message = client.messages.create(
             to=patient_number,
             from_=settings.TWILIO_CALLER_ID,
