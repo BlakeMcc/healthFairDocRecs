@@ -6,6 +6,7 @@ import requests
 from django.shortcuts import render
 from django.conf import settings
 from django.urls import reverse
+from django.db.models import F
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.views.generic import View, TemplateView
@@ -42,8 +43,7 @@ def get_docs(**kwargs):
     better_docs_params['location'] = zip_to_lat_lon(better_docs_params['zip_code'])
     better_docs_params.pop('zip_code')
 
-    url = 'https://api.betterdoctor.com/2016-03-01/doctors'
-    r = requests.get(url, params=better_docs_params)
+    r = requests.get(settings.BETTER_DOCTOR_URL, params=better_docs_params)
     return r.json()['data']
 
 
@@ -93,6 +93,11 @@ def query_provider_detail(npi):
 # TODO: Pull insurance and specialty options
 def get_api_options():
     return {
+        'gender_options': [
+            {'value': 'female', 'display': 'Female'},
+            {'value': 'male', 'display': 'Male'},
+            {'value': 'other', 'display': 'Other'}
+        ],
         'specialty_options': [
             {'value': 'pcp', 'display': 'Primary Care Provider'},
             {'value': 'end', 'display': 'Endocrinologist'}
@@ -145,6 +150,7 @@ class ScreenView(TemplateView):
     # Renders template based on pre-created slug
     def get(self, request, *args, **kwargs):
         screen_obj = Screen.objects.filter(slug=kwargs['slug'])
+        screen_obj.update(visits=F('visits')+1)
         if not len(screen_obj):
             return HttpResponseBadRequest()
 
@@ -160,39 +166,28 @@ class ScreenView(TemplateView):
         response_dict.update(get_api_options())
         return render(request, self.template_name, response_dict)
 
-    # Updates the Screen object with new saved params
-    def put(self, request, *args, **kwargs):
-        put_args = request.POST.dict()
-        params = parse_params(put_args)
-        if len(params.keys()) == 0:
-            return JsonResponse({'message': 'Must include search terms for providers'})
-
-        screen_obj = Screen.objects.filter(slug=kwargs['slug'])
-        if not len(screen_obj):
-            return JsonResponse({'message': 'Not found'})
-
-        screen_obj.update(
-            params=params,
-            phone=put_args.get('phone'),
-            email=put_args.get('email')
-        )
-        return JsonResponse({
-            'id': screen_obj.id,
-            'slug': screen_obj.slug,
-            'params': screen_obj.params
-        })
-
-    # Submits params to APIs, returns results
     def post(self, request, *args, **kwargs):
         post_args = request.POST.dict()
         params = parse_params(post_args)
         if len(params.keys()) == 0:
             return JsonResponse({'message': 'Must include search terms for providers'})
+        screen_obj = Screen.objects.filter(slug=kwargs['slug'])
+        if not len(screen_obj):
+            return JsonResonse({'message': 'Not found'})
 
-        providers = query_providers(params)
+        screen_obj.update(
+            params=params,
+            phone=post_args.get('phone'),
+            email=post_args.get('email')
+        )
+        provider_info = query_providers(params)
+        response_dict = {'screen': screen_obj[0], 'providers': provider_info}
+        response_dict['next_skip'] = 10
+
+        response_dict.update(get_api_options())
         if request.GET.get('format') == 'json':
             return JsonResponse(providers)
-        return render(request, self.template_name, providers)
+        return render(request, self.template_name, response_dict)
 
 
 class SendTextView(View):
@@ -200,7 +195,6 @@ class SendTextView(View):
         return super(SendTextView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        # TODO: Implement sending text to email with URL, first results?
         screen_obj = Screen.objects.filter(slug=kwargs['slug'])
         if not len(screen_obj):
             return HttpResponseBadRequest()

@@ -50,13 +50,13 @@
     </table>
   </div>
   <div class="col-md-10">
-    {% if prev_skip %}
-    <a class="btn btn-default" href="{% url 'screen' screen.slug %}?skip={{prev_skip}}" role="button">
+    {% if prev_skip or prev_skip == 0 %}
+    <a class="btn btn-default pull-left" href="{% url 'screen' screen.slug %}?skip={{prev_skip}}" role="button">
       Previous
     </a>
     {% endif %}
     {% if next_skip %}
-    <a class="btn btn-default" href="{% url 'screen' screen.slug %}?skip={{next_skip}}" role="button">
+    <a class="btn btn-default pull-right" href="{% url 'screen' screen.slug %}?skip={{next_skip}}" role="button">
       Next
     </a>
     {% endif %}

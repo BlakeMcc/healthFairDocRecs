@@ -1,8 +1,12 @@
 body .main {
-  margin-top: 50px;
+  margin-top: 75px;
+  margin-bottom: 25px;
 }
 
 .button-row {
-  height: 50px;
   padding: 20px;
+}
+
+form {
+  margin-bottom: 25px;
 }

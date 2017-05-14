@@ -127,12 +127,16 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # APIs
 
 # Twilio
-TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', None)
-TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', None)
-TWILIO_CALLER_ID = os.environ.get('TWILIO_CALLER_ID', None)
-TWILIO_APP_SID = os.environ.get('TWILIO_APP_SID', None)
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
+TWILIO_CALLER_ID = os.environ.get('TWILIO_CALLER_ID')
+TWILIO_APP_SID = os.environ.get('TWILIO_APP_SID')
 
 # BetterDoctor
+BETTER_DOCTOR_URL = 'https://api.betterdoctor.com/2016-03-01/doctors'
 BETTER_DOCTOR_API_KEY = os.environ.get('BETTER_DOCTOR_API_KEY')
+
+# Vital Signs
+VITAL_SIGNS_API_KEY = os.environ.get('VITAL_SIGNS_API_KEY')
 
 from .sluggen import SLUG_WORDS

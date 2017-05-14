@@ -2,24 +2,25 @@
   <div class="col-md-6">
     <div class="form-group">
       <label for="zip_code">Zip Code</label>
-      <input type="text" name="zip_code" class="form-control" id="zip_code" aria-describedby="zipHelp" required
+      <input type="text" name="zip_code" class="form-control" id="zip_code" required
       {% if screen %}{% if 'zip_code' in screen.params %}
       value="{{screen.params.zip_code}}"
       {% endif %}{% endif %}>
-      <small id="zipHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
     </div>
   </div>
   <div class="col-md-6">
     <div class="form-group">
       <label for="gender">Gender</label>
-      <select class="form-control" id="gender" name="gender"
-        {% if screen %}{% if 'gender' in screen.params %}
-        value="{{screen.params.gender}}"
-        {% endif %}{% endif %}>
+      <select class="form-control" id="gender" name="gender">
         <option></option>
-        <option value="m">Male</option>
-        <option value="f">Female</option>
-        <option value="o">Other</option>
+        {% for gender in gender_options %}
+        <option value="{{gender.value}}"
+        {% if screen %}
+        {% if 'gender' in screen.params %}
+        {% if screen.params.gender == gender.value %}
+        selected
+        {% endif %}{% endif %}{% endif %}>{{gender.display}}</option>
+        {% endfor %}
       </select>
     </div>
   </div>
